@@ -1,14 +1,30 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { useSettings } from "../hooks/useSettings";
+
 export default function ShiftConsumptionCard() {
+  const { settings, isLoaded: settingsLoaded } = useSettings();
+  const [iframeSrc, setIframeSrc] = useState(
+    `http://192.168.68.99:3000/d-solo/jv5xcvr/graha-pacific?orgId=1&from=now-2d&to=now&timezone=browser&var-site=&var-equipment=&var-sample=&var-signal=&var-device=&var-area=&var-powerFactor=&var-LWBP=&var-WBP=&var-LWBP_price=&var-WBP_price=&refresh=5s&panelId=panel-8&theme=light&__feature.dashboardSceneSolo=true`
+  );
+
+  useEffect(() => {
+    if (settingsLoaded) {
+      const pf = settings.powerFactor ?? "";
+      const src = `http://192.168.68.99:3000/d-solo/jv5xcvr/graha-pacific?orgId=1&from=now-2d&to=now&timezone=browser&var-site=&var-equipment=&var-sample=&var-signal=&var-device=&var-area=&var-powerFactor=${encodeURIComponent(
+        String(pf)
+      )}&var-LWBP=&var-WBP=&var-LWBP_price=&var-WBP_price=&refresh=5s&panelId=panel-8&theme=light&__feature.dashboardSceneSolo=true`;
+      setIframeSrc(src);
+    }
+  }, [settingsLoaded, settings.powerFactor]);
+
   return (
     <div id="shift-consumption-card" className="bg-white rounded-lg border-2 border-blue-200 shadow-sm p-6">
       <div className="flex items-start justify-between mb-4">
         <div>
           <h3 className="text-lg font-semibold text-gray-800 mb-3">Energy Consumption per Shift (Last 24 Hours)</h3>
-          <div className="space-y-1 text-sm text-gray-600">
-            <p><span className="font-medium">Shift 1:</span> 07:00 – 14:59</p>
-            <p><span className="font-medium">Shift 2:</span> 15:00 – 22:59</p>
-            <p><span className="font-medium">Shift 3:</span> 23:00 – 06:59</p>
-          </div>
+
         </div>
         {/* <div className="flex flex-col space-y-2">
           <button className="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded">
@@ -23,26 +39,28 @@ export default function ShiftConsumptionCard() {
         </div> */}
       </div>
 
-      <div className="flex items-center justify-center my-8">
+      {/* <div className="flex items-center justify-center my-8">
         <div className="w-64 h-64 bg-gray-100 rounded-full flex items-center justify-center">
           <span className="text-gray-400 text-sm">Pie Chart Grafana Placeholder</span>
         </div>
-      </div>
-
-      <div className="flex items-center justify-center space-x-6">
+      </div> */}
+      <iframe src={iframeSrc} width="450" height="400" frameBorder="0"></iframe>
+      <p className="text-xs text-gray-500 break-all mb-4">
+        <strong>Link:</strong> <a href={iframeSrc} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">{iframeSrc}</a>
+      </p>
         <div className="flex items-center">
           <div className="w-4 h-4 bg-red-500 rounded mr-2"></div>
-          <span className="text-sm text-gray-700">Shift 1</span>
+          <span className="text-sm text-gray-700">Shift 1: 07:00 – 14:59</span>
         </div>
         <div className="flex items-center">
           <div className="w-4 h-4 bg-yellow-400 rounded mr-2"></div>
-          <span className="text-sm text-gray-700">Shift 2</span>
+          <span className="text-sm text-gray-700">Shift 2: 15:00 – 22:59</span>
         </div>
         <div className="flex items-center">
           <div className="w-4 h-4 bg-blue-500 rounded mr-2"></div>
-          <span className="text-sm text-gray-700">Shift 3</span>
+          <span className="text-sm text-gray-700">Shift 3: 23:00 – 06:59</span>
         </div>
       </div>
-    </div>
+
   );
 }

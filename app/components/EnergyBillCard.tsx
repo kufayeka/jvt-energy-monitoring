@@ -1,72 +1,170 @@
-export default function EnergyBillCard() {
+"use client";
+
+import { useEffect, useState } from "react";
+import type { ReactNode } from "react";
+import { useSettings } from "../hooks/useSettings";
+
+/* ================= CONFIG ================= */
+
+const GRAFANA_BASE =
+  "http://192.168.68.99:3000/d-solo/jv5xcvr/graha-pacific";
+
+type PanelKey =
+  | "energyTotal"
+  | "energyWBP"
+  | "energyLWBP"
+  | "billTotal"
+  | "billWBP"
+  | "billLWBP";
+
+const PANEL_ID: Record<PanelKey, string> = {
+  energyTotal: "panel-9",
+  energyWBP: "panel-12",
+  energyLWBP: "panel-13",
+  billTotal: "panel-7",
+  billWBP: "panel-10",
+  billLWBP: "panel-11",
+};
+
+/* ================= HELPERS ================= */
+
+const buildGrafanaUrl = (
+  panelId: string,
+  vars: {
+    powerFactor: number | null;
+    WBP: string | null;
+    LWBP: string | null;
+    WBP_price: number | null;
+    LWBP_price: number | null;
+  }
+) => {
   return (
-    <div id="energy-bill-card" className="bg-white rounded-lg border-2 border-blue-200 shadow-sm p-6">
+    `${GRAFANA_BASE}?orgId=1` +
+    `&from=now-2d&to=now&timezone=browser` +
+    `&var-site=&var-equipment=&var-sample=&var-signal=&var-device=&var-area=` +
+    `&var-powerFactor=${vars.powerFactor ?? ""}` +
+    `&var-WBP=${vars.WBP ?? ""}` +
+    `&var-LWBP=${vars.LWBP ?? ""}` +
+    `&var-WBP_price=${vars.WBP_price ?? ""}` +
+    `&var-LWBP_price=${vars.LWBP_price ?? ""}` +
+    `&refresh=5s&panelId=${panelId}&theme=light` +
+    `&__feature.dashboardSceneSolo=true`
+  );
+};
+
+const DebugLink = ({ url }: { url: string }) => (
+  <a
+    href={url}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="text-xs text-gray-400 hover:text-blue-600 underline mt-1 inline-block"
+  >
+    Debug Grafana ↗
+  </a>
+);
+
+/* ================= COMPONENT ================= */
+
+export default function EnergyBillCard() {
+  const { settings, isLoaded } = useSettings();
+
+  // awalnya NULL semua → biar angka gak ngawur
+  const [panels, setPanels] = useState<Record<PanelKey, string>>({
+    energyTotal: "",
+    energyWBP: "",
+    energyLWBP: "",
+    billTotal: "",
+    billWBP: "",
+    billLWBP: "",
+  });
+
+  useEffect(() => {
+    if (!isLoaded) return;
+
+    const vars = {
+      powerFactor: settings.powerFactor ?? null,
+      WBP: settings.tariff1StartTime ?? null,
+      LWBP: settings.tariff1EndTime ?? null,
+      WBP_price: settings.tariff1PerKwh ?? null,
+      LWBP_price: settings.tariff2PerKwh ?? null,
+    };
+
+    setPanels({
+      energyTotal: buildGrafanaUrl(PANEL_ID.energyTotal, vars),
+      energyWBP: buildGrafanaUrl(PANEL_ID.energyWBP, vars),
+      energyLWBP: buildGrafanaUrl(PANEL_ID.energyLWBP, vars),
+      billTotal: buildGrafanaUrl(PANEL_ID.billTotal, vars),
+      billWBP: buildGrafanaUrl(PANEL_ID.billWBP, vars),
+      billLWBP: buildGrafanaUrl(PANEL_ID.billLWBP, vars),
+    });
+  }, [isLoaded, settings]);
+
+  const renderPanel = (url: string): ReactNode =>
+    url ? (
+      <>
+        <iframe src={url} width="100%" height="120" frameBorder="0" />
+        <DebugLink url={url} />
+      </>
+    ) : (
+      <div className="text-xs text-gray-400">Loading…</div>
+    );
+
+  return (
+    <div className="bg-white rounded-lg border-2 border-blue-200 shadow-sm p-6">
+      {/* HEADER */}
       <div className="flex items-start justify-between mb-5">
-        <h3 className="text-lg font-bold text-gray-800">Energy & Bill Summary</h3>
-        <p className="text-sm text-gray-500">Summary from 01/01/2026 to 31/01/2026</p>
+        <h3 className="text-lg font-bold text-gray-800">
+          Energy & Bill Summary
+        </h3>
+        <p className="text-sm text-gray-500">Last 2 Days</p>
       </div>
 
-      <div className="mb-6 space-y-1">
-        <p className="text-sm text-gray-600">Multi-Tariff 1 (WBP) : <span className="font-medium">Rp. 1553.67 per kWh</span></p>
-        <p className="text-sm text-gray-600">Multi-Tariff 2 (LWBP) : <span className="font-medium">Rp. 1035.78 per kWh</span></p>
-      </div>
-
-      <div className="grid grid-cols-2 gap-8">
-        <div className="space-y-4 flex flex-col items-center">
-          <div className="flex items-start space-x-3 pb-4 border-b-2 border-gray-200">
-            <i className="fa-solid fa-bolt text-2xl text-blue-600 mt-1"></i>
-            <div>
-              <p className="text-sm text-gray-600 mb-1">Total Energy Consumption</p>
-              <p className="text-2xl font-bold text-blue-600">111,333.77 kWh</p>
-            </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* ENERGY */}
+        <div className="space-y-4">
+          <div>
+            <p className="text-sm text-gray-600 mb-2">
+              Total Energy Consumption
+            </p>
+            {renderPanel(panels.energyTotal)}
           </div>
 
-          <div className="space-y-3">
-            <div className="flex flex-col justify-between items-center">
-                <span className="text-sm text-gray-600">Energy Consumption (WBP)</span>
-                <div className="flex items-center justify-center">
-                    <div className="w-70 h-20 bg-gray-100 flex items-center justify-center">
-                        <span className="text-gray-400 text-sm">Grafana Placeholder</span>
-                    </div>
-                </div>
-            </div>
-            <div className="flex flex-col justify-between items-center">
-              <span className="text-sm text-gray-600">Energy Consumption (LWBP)</span>
-                <div className="flex items-center justify-center">
-                    <div className="w-70 h-20 bg-gray-100 flex items-center justify-center">
-                        <span className="text-gray-400 text-sm">Grafana Placeholder</span>
-                    </div>
-                </div>
-            </div>
+          <div>
+            <p className="text-sm text-gray-600 mb-2">
+              Energy Consumption (WBP)
+            </p>
+            {renderPanel(panels.energyWBP)}
+          </div>
+
+          <div>
+            <p className="text-sm text-gray-600 mb-2">
+              Energy Consumption (LWBP)
+            </p>
+            {renderPanel(panels.energyLWBP)}
           </div>
         </div>
 
-        <div className="space-y-4 flex flex-col items-center">
-          <div className="flex items-start space-x-3 pb-4 border-b-2 border-gray-200">
-            <i className="fa-solid fa-coins text-2xl text-red-600 mt-1"></i>
-            <div>
-              <p className="text-sm text-gray-600 mb-1">Total Energy Bill</p>
-              <p className="text-2xl font-bold text-red-600">Rp. 111,333,777</p>
-            </div>
+        {/* BILL */}
+        <div className="space-y-4">
+          <div>
+            <p className="text-sm text-gray-600 mb-2">
+              Total Energy Bill
+            </p>
+            {renderPanel(panels.billTotal)}
           </div>
 
-          <div className="space-y-3">
-            <div className="flex flex-col justify-between items-center">
-              <span className="text-sm text-gray-600">Energy Bill (WBP)</span>
-                <div className="flex items-center justify-center">
-                    <div className="w-70 h-20 bg-gray-100 flex items-center justify-center">
-                        <span className="text-gray-400 text-sm">Grafana Placeholder</span>
-                    </div>
-                </div>
-            </div>
-            <div className="flex flex-col justify-between items-center">
-              <span className="text-sm text-gray-600">Energy Bill (LWBP)</span>
-                <div className="flex items-center justify-center">
-                    <div className="w-70 h-20 bg-gray-100 flex items-center justify-center">
-                        <span className="text-gray-400 text-sm">Grafana Placeholder</span>
-                    </div>
-                </div>
-            </div>
+          <div>
+            <p className="text-sm text-gray-600 mb-2">
+              Energy Bill (WBP)
+            </p>
+            {renderPanel(panels.billWBP)}
+          </div>
+
+          <div>
+            <p className="text-sm text-gray-600 mb-2">
+              Energy Bill (LWBP)
+            </p>
+            {renderPanel(panels.billLWBP)}
           </div>
         </div>
       </div>

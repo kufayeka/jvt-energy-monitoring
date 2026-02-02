@@ -7,7 +7,7 @@ export default function CompanyInfoCard() {
         Surabaya - Jawa Timur 60271
       </p>
 
-      <div className="h-100 bg-gray-100 rounded-sm overflow-hidden">
+      <div className="h-125 bg-gray-100 rounded-sm overflow-hidden">
         <img className="w-full h-full object-contain" src="./grahapacific1-transparent-ai.png" alt="modern industrial building facade exterior corporate headquarters" />
       </div>
     </div>
