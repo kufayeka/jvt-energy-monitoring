@@ -1,36 +1,43 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { TextField } from "@mui/material";
 import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
+import DebugLink from "../components/DebugLink";
 import { useSettings } from "../hooks/useSettings";
+import { useAtom, useAtomValue } from "jotai";
+import {
+  analyticsEndDateAtom,
+  analyticsIframeBreakdownAtom,
+  analyticsIframeTotalAtom,
+  analyticsSampleTimeAtom,
+  analyticsStartDateAtom,
+  refreshTickAtom,
+} from "../state/grafana";
 
 export default function Analytics() {
-  const [isClient, setIsClient] = useState(false);
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [sampleTime, setSampleTime] = useState("");
-  const { settings, saveSettings, updateSetting, isLoaded: settingsLoaded } = useSettings();
-  const [iframeSrcTotal, setIframeSrcTotal] = useState(
-    `http://192.168.68.99:3000/d-solo/jv5xcvr/graha-pacific?orgId=1&from=1766135892000&to=1766141404000&timezone=browser&var-site=&var-equipment=&var-sample=&var-signal=&var-device=&var-area=&var-powerFactor=&var-LWBP=&var-WBP=&var-LWBP_price=&var-WBP_price=&refresh=5s&panelId=panel-3&theme=light&__feature.dashboardSceneSolo=true`
-  );
-  const [iframeSrcBreakdown, setIframeSrcBreakdown] = useState(
-    `http://192.168.68.99:3000/d-solo/jv5xcvr/graha-pacific?orgId=1&from=1766135892000&to=1766141404000&timezone=browser&var-site=&var-equipment=&var-sample=&var-signal=&var-device=&var-area=&var-powerFactor=&var-LWBP=&var-WBP=&var-LWBP_price=&var-WBP_price=&refresh=5s&panelId=panel-4&theme=light&__feature.dashboardSceneSolo=true`
-  );
+  const [startDate, setStartDate] = useAtom(analyticsStartDateAtom);
+  const [endDate, setEndDate] = useAtom(analyticsEndDateAtom);
+  const [sampleTime, setSampleTime] = useAtom(analyticsSampleTimeAtom);
+  const [iframeSrcTotal, setIframeSrcTotal] = useAtom(analyticsIframeTotalAtom);
+  const [iframeSrcBreakdown, setIframeSrcBreakdown] = useAtom(analyticsIframeBreakdownAtom);
+  const refreshTick = useAtomValue(refreshTickAtom);
+  const { settings } = useSettings();
 
-  const buildGrafanaSrc = (panelId: string) => {
+  const buildGrafanaSrc = (panelId: string, refreshKey?: number) => {
     // Fallback to fixed timestamps if dates aren't provided
     const fromMs = startDate ? new Date(startDate).getTime() : 1766135892000;
     const toMs = endDate ? new Date(endDate).getTime() : 1766141404000;
     const pf = settings?.powerFactor ?? "";
     const sample = sampleTime ?? "";
+    const refreshQuery = refreshKey ? `&_refresh=${refreshKey}` : "";
 
     return `http://192.168.68.99:3000/d-solo/jv5xcvr/graha-pacific?orgId=1&from=${fromMs}&to=${toMs}&timezone=browser&var-site=&var-equipment=&var-sample=${encodeURIComponent(
       sample
     )}&var-signal=&var-device=&var-area=&var-powerFactor=${encodeURIComponent(String(
       pf
-    ))}&var-LWBP=&var-WBP=&var-LWBP_price=&var-WBP_price=&refresh=5s&panelId=${panelId}&theme=light&__feature.dashboardSceneSolo=true`;
+    ))}&var-LWBP=&var-WBP=&var-LWBP_price=&var-WBP_price=&refresh=5s&panelId=${panelId}&theme=light&__feature.dashboardSceneSolo=true${refreshQuery}`;
   };
 
   const handleGenerate = () => {
@@ -39,12 +46,31 @@ export default function Analytics() {
   };
 
   useEffect(() => {
-    setIsClient(true);
-  }, []);
+    if (refreshTick > 0) {
+      setIframeSrcTotal(buildGrafanaSrc("panel-3", refreshTick));
+      setIframeSrcBreakdown(buildGrafanaSrc("panel-4", refreshTick));
+    }
+  }, [refreshTick]);
 
-  if (!isClient) {
-    return null;
-  }
+  const iframeSrcTotalWithRefresh = useMemo(
+    () => {
+      if (!iframeSrcTotal || refreshTick === 0) return iframeSrcTotal;
+      const url = new URL(iframeSrcTotal);
+      url.searchParams.set("_refresh", String(refreshTick));
+      return url.toString();
+    },
+    [iframeSrcTotal, refreshTick]
+  );
+
+  const iframeSrcBreakdownWithRefresh = useMemo(
+    () => {
+      if (!iframeSrcBreakdown || refreshTick === 0) return iframeSrcBreakdown;
+      const url = new URL(iframeSrcBreakdown);
+      url.searchParams.set("_refresh", String(refreshTick));
+      return url.toString();
+    },
+    [iframeSrcBreakdown, refreshTick]
+  );
 
   return (
     <>
@@ -115,16 +141,12 @@ export default function Analytics() {
 
           <div className="my-8 flex flex-col items-center gap-6 bg-white border border-blue-200 p-4 rounded">
             <h2 className="text-xl font-semibold">Energy Consumption Trend (Total)</h2>
-            <iframe src={iframeSrcTotal} width="100%" height="500" frameBorder="0"></iframe>
-            <p className="text-xs text-gray-500 break-all">
-              <strong>Link:</strong> <a href={iframeSrcTotal} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">{iframeSrcTotal}</a>
-            </p>
+            <iframe src={iframeSrcTotalWithRefresh} width="100%" height="500" frameBorder="0"></iframe>
+            <DebugLink url={iframeSrcTotalWithRefresh} />
             
             <h2 className="text-xl font-semibold">Energy Consumption Trend (Breakdown)</h2>
-            <iframe src={iframeSrcBreakdown} width="100%" height="500" frameBorder="0"></iframe>
-            <p className="text-xs text-gray-500 break-all">
-              <strong>Link:</strong> <a href={iframeSrcBreakdown} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">{iframeSrcBreakdown}</a>
-            </p>
+            <iframe src={iframeSrcBreakdownWithRefresh} width="100%" height="500" frameBorder="0"></iframe>
+            <DebugLink url={iframeSrcBreakdownWithRefresh} />
 
           </div>
 

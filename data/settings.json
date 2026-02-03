@@ -1,0 +1,7 @@
+{
+  "tariff1PerKwh": 1200,
+  "tariff1StartTime": "18:00",
+  "tariff1EndTime": "22:00",
+  "tariff2PerKwh": 1100,
+  "powerFactor": 0.844
+}

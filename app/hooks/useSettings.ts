@@ -16,44 +16,52 @@ const DEFAULT_SETTINGS: Settings = {
   powerFactor: 0,
 };
 
-const STORAGE_KEY = "powerMeterSettings";
-
 export function useSettings() {
   const [settings, setSettings] = useState<Settings>(DEFAULT_SETTINGS);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // Load from localStorage on mount
+  // Load from API on mount
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        try {
-          const parsed = JSON.parse(saved);
-          console.log("Loaded settings from localStorage:", parsed);
-          setSettings(parsed);
-        } catch (error) {
-          console.error("Failed to parse settings:", error);
-          setSettings(DEFAULT_SETTINGS);
+    let active = true;
+    const load = async () => {
+      try {
+        const res = await fetch("/api/settings", { cache: "no-store" });
+        const data = (await res.json()) as Settings;
+        if (active) {
+          setSettings(data);
+          setIsLoaded(true);
         }
-      } else {
-        console.log("No saved settings found, using defaults");
-        setSettings(DEFAULT_SETTINGS);
+      } catch (error) {
+        console.error("Failed to load settings:", error);
+        if (active) {
+          setSettings(DEFAULT_SETTINGS);
+          setIsLoaded(true);
+        }
       }
-      setIsLoaded(true);
-    }
+    };
+    load();
+    return () => {
+      active = false;
+    };
   }, []);
 
-  // Save to localStorage
-  const saveSettings = (newSettings: Settings) => {
+  // Save to API
+  const saveSettings = async (newSettings: Settings) => {
     setSettings(newSettings);
-    if (typeof window !== "undefined") {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(newSettings));
-      console.log("Settings saved to localStorage:", newSettings);
+    setIsLoaded(true);
+    try {
+      await fetch("/api/settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newSettings),
+      });
+    } catch (error) {
+      console.error("Failed to save settings:", error);
     }
   };
 
   // Update single field
-  const updateSetting = (key: keyof Settings, value: any) => {
+  const updateSetting = <K extends keyof Settings>(key: K, value: Settings[K]) => {
     const updated = { ...settings, [key]: value };
     saveSettings(updated);
   };

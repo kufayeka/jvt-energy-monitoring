@@ -1,7 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useMemo } from "react";
 import { useSettings } from "../hooks/useSettings";
+import { useAtomValue } from "jotai";
+import { refreshTickAtom } from "../state/grafana";
+import DebugLink from "./DebugLink";
 
 function pad(n: number) {
   return n.toString().padStart(2, "0");
@@ -29,35 +32,31 @@ function formatRange(now: Date) {
 
 export default function EnergyConsumptionCard() {
   const { settings, isLoaded: settingsLoaded } = useSettings();
-  const [displayRange, setDisplayRange] = useState("");
-  const [iframeSrc, setIframeSrc] = useState("");
-  const [fromDate, setFromDate] = useState<Date | null>(null);
-  const [toDate, setToDate] = useState<Date | null>(null);
+  const refreshTick = useAtomValue(refreshTickAtom);
 
-  // compute from/to dates once on client mount to avoid SSR hydration mismatch
-  useEffect(() => {
+  const { fromDate, toDate, displayRange } = useMemo(() => {
     const now = new Date();
     const from = new Date(now);
     from.setDate(now.getDate() - 2);
     from.setHours(0, 0, 0, 0);
-    setFromDate(from);
-    setToDate(now);
-    setDisplayRange(formatRange(now));
+    return {
+      fromDate: from,
+      toDate: now,
+      displayRange: formatRange(now),
+    };
   }, []);
 
-  // build iframe URL using the computed from/to dates and settings
-  useEffect(() => {
-    if (settingsLoaded && fromDate && toDate) {
-      const pf = settings.powerFactor ?? "";
-      const fromMs = fromDate.getTime();
-      const toMs = toDate.getTime();
+  const iframeSrc = useMemo(() => {
+    if (!settingsLoaded) return "";
+    const pf = settings.powerFactor ?? "";
+    const fromMs = fromDate.getTime();
+    const toMs = toDate.getTime();
+    const refreshQuery = refreshTick ? `&_refresh=${refreshTick}` : "";
 
-      const src = `http://192.168.68.99:3000/d-solo/jv5xcvr/graha-pacific?orgId=1&from=${fromMs}&to=${toMs}&timezone=browser&var-site=&var-equipment=&var-sample=&var-signal=&var-device=&var-area=&var-powerFactor=${encodeURIComponent(
-        String(pf)
-      )}&var-LWBP=&var-WBP=&var-LWBP_price=&var-WBP_price=&refresh=5s&panelId=panel-5&theme=light&__feature.dashboardSceneSolo=true`;
-      setIframeSrc(src);
-    }
-  }, [settingsLoaded, settings.powerFactor, fromDate, toDate]);
+    return `http://192.168.68.99:3000/d-solo/jv5xcvr/graha-pacific?orgId=1&from=${fromMs}&to=${toMs}&timezone=browser&var-site=&var-equipment=&var-sample=&var-signal=&var-device=&var-area=&var-powerFactor=${encodeURIComponent(
+      String(pf)
+    )}&var-LWBP=&var-WBP=&var-LWBP_price=&var-WBP_price=&refresh=5s&panelId=panel-5&theme=light&__feature.dashboardSceneSolo=true${refreshQuery}`;
+  }, [settingsLoaded, settings.powerFactor, fromDate, toDate, refreshTick]);
 
   return (
     <div id="energy-consumption-card" className="bg-white rounded-lg border-2 border-blue-200 shadow-sm p-6">
@@ -84,9 +83,7 @@ export default function EnergyConsumptionCard() {
         <iframe src={iframeSrc || undefined} width="100%" height="500" frameBorder="0"></iframe>
       </div>
       {iframeSrc && (
-        <p className="text-xs text-gray-500 break-all mb-4">
-          <strong>Link:</strong> <a href={iframeSrc} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">{iframeSrc}</a>
-        </p>
+        <DebugLink url={iframeSrc} />
       )}
     </div>
   );

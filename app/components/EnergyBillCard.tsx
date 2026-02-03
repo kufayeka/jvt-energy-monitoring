@@ -1,8 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import type { ReactNode } from "react";
 import { useSettings } from "../hooks/useSettings";
+import { useAtomValue } from "jotai";
+import { refreshTickAtom } from "../state/grafana";
+import DebugLink from "./DebugLink";
 
 /* ================= CONFIG ================= */
 
@@ -36,8 +39,10 @@ const buildGrafanaUrl = (
     LWBP: string | null;
     WBP_price: number | null;
     LWBP_price: number | null;
-  }
+  },
+  refreshKey?: number
 ) => {
+  const refreshQuery = refreshKey ? `&_refresh=${refreshKey}` : "";
   return (
     `${GRAFANA_BASE}?orgId=1` +
     `&from=now-2d&to=now&timezone=browser` +
@@ -48,38 +53,27 @@ const buildGrafanaUrl = (
     `&var-WBP_price=${vars.WBP_price ?? ""}` +
     `&var-LWBP_price=${vars.LWBP_price ?? ""}` +
     `&refresh=5s&panelId=${panelId}&theme=light` +
-    `&__feature.dashboardSceneSolo=true`
+    `&__feature.dashboardSceneSolo=true${refreshQuery}`
   );
 };
-
-const DebugLink = ({ url }: { url: string }) => (
-  <a
-    href={url}
-    target="_blank"
-    rel="noopener noreferrer"
-    className="text-xs text-gray-400 hover:text-blue-600 underline mt-1 inline-block"
-  >
-    Debug Grafana ↗
-  </a>
-);
 
 /* ================= COMPONENT ================= */
 
 export default function EnergyBillCard() {
   const { settings, isLoaded } = useSettings();
+  const refreshTick = useAtomValue(refreshTickAtom);
 
-  // awalnya NULL semua → biar angka gak ngawur
-  const [panels, setPanels] = useState<Record<PanelKey, string>>({
-    energyTotal: "",
-    energyWBP: "",
-    energyLWBP: "",
-    billTotal: "",
-    billWBP: "",
-    billLWBP: "",
-  });
-
-  useEffect(() => {
-    if (!isLoaded) return;
+  const panels = useMemo<Record<PanelKey, string>>(() => {
+    if (!isLoaded) {
+      return {
+        energyTotal: "",
+        energyWBP: "",
+        energyLWBP: "",
+        billTotal: "",
+        billWBP: "",
+        billLWBP: "",
+      };
+    }
 
     const vars = {
       powerFactor: settings.powerFactor ?? null,
@@ -89,15 +83,15 @@ export default function EnergyBillCard() {
       LWBP_price: settings.tariff2PerKwh ?? null,
     };
 
-    setPanels({
-      energyTotal: buildGrafanaUrl(PANEL_ID.energyTotal, vars),
-      energyWBP: buildGrafanaUrl(PANEL_ID.energyWBP, vars),
-      energyLWBP: buildGrafanaUrl(PANEL_ID.energyLWBP, vars),
-      billTotal: buildGrafanaUrl(PANEL_ID.billTotal, vars),
-      billWBP: buildGrafanaUrl(PANEL_ID.billWBP, vars),
-      billLWBP: buildGrafanaUrl(PANEL_ID.billLWBP, vars),
-    });
-  }, [isLoaded, settings]);
+    return {
+      energyTotal: buildGrafanaUrl(PANEL_ID.energyTotal, vars, refreshTick),
+      energyWBP: buildGrafanaUrl(PANEL_ID.energyWBP, vars, refreshTick),
+      energyLWBP: buildGrafanaUrl(PANEL_ID.energyLWBP, vars, refreshTick),
+      billTotal: buildGrafanaUrl(PANEL_ID.billTotal, vars, refreshTick),
+      billWBP: buildGrafanaUrl(PANEL_ID.billWBP, vars, refreshTick),
+      billLWBP: buildGrafanaUrl(PANEL_ID.billLWBP, vars, refreshTick),
+    };
+  }, [isLoaded, settings, refreshTick]);
 
   const renderPanel = (url: string): ReactNode =>
     url ? (

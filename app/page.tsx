@@ -15,7 +15,6 @@ export default function Home() {
           <CompanyInfoCard />
           <EnergyBillCard />
         </section>
-
         <section id="bottom-section" className="grid grid-cols-[70%_30%] gap-1">
           <EnergyConsumptionCard />
           <ShiftConsumptionCard />

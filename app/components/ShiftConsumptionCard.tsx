@@ -1,23 +1,22 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useMemo } from "react";
 import { useSettings } from "../hooks/useSettings";
+import { useAtomValue } from "jotai";
+import { refreshTickAtom } from "../state/grafana";
+import DebugLink from "./DebugLink";
 
 export default function ShiftConsumptionCard() {
   const { settings, isLoaded: settingsLoaded } = useSettings();
-  const [iframeSrc, setIframeSrc] = useState(
-    `http://192.168.68.99:3000/d-solo/jv5xcvr/graha-pacific?orgId=1&from=now-2d&to=now&timezone=browser&var-site=&var-equipment=&var-sample=&var-signal=&var-device=&var-area=&var-powerFactor=&var-LWBP=&var-WBP=&var-LWBP_price=&var-WBP_price=&refresh=5s&panelId=panel-8&theme=light&__feature.dashboardSceneSolo=true`
-  );
+  const refreshTick = useAtomValue(refreshTickAtom);
 
-  useEffect(() => {
-    if (settingsLoaded) {
-      const pf = settings.powerFactor ?? "";
-      const src = `http://192.168.68.99:3000/d-solo/jv5xcvr/graha-pacific?orgId=1&from=now-2d&to=now&timezone=browser&var-site=&var-equipment=&var-sample=&var-signal=&var-device=&var-area=&var-powerFactor=${encodeURIComponent(
-        String(pf)
-      )}&var-LWBP=&var-WBP=&var-LWBP_price=&var-WBP_price=&refresh=5s&panelId=panel-8&theme=light&__feature.dashboardSceneSolo=true`;
-      setIframeSrc(src);
-    }
-  }, [settingsLoaded, settings.powerFactor]);
+  const iframeSrc = useMemo(() => {
+    const pf = settingsLoaded ? settings.powerFactor ?? "" : "";
+    const refreshQuery = refreshTick ? `&_refresh=${refreshTick}` : "";
+    return `http://192.168.68.99:3000/d-solo/jv5xcvr/graha-pacific?orgId=1&from=now-2d&to=now&timezone=browser&var-site=&var-equipment=&var-sample=&var-signal=&var-device=&var-area=&var-powerFactor=${encodeURIComponent(
+      String(pf)
+    )}&var-LWBP=&var-WBP=&var-LWBP_price=&var-WBP_price=&refresh=5s&panelId=panel-8&theme=light&__feature.dashboardSceneSolo=true${refreshQuery}`;
+  }, [settingsLoaded, settings.powerFactor, refreshTick]);
 
   return (
     <div id="shift-consumption-card" className="bg-white rounded-lg border-2 border-blue-200 shadow-sm p-6">
@@ -45,9 +44,7 @@ export default function ShiftConsumptionCard() {
         </div>
       </div> */}
       <iframe src={iframeSrc} width="450" height="400" frameBorder="0"></iframe>
-      <p className="text-xs text-gray-500 break-all mb-4">
-        <strong>Link:</strong> <a href={iframeSrc} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">{iframeSrc}</a>
-      </p>
+      <DebugLink url={iframeSrc} />
         <div className="flex items-center">
           <div className="w-4 h-4 bg-red-500 rounded mr-2"></div>
           <span className="text-sm text-gray-700">Shift 1: 07:00 – 14:59</span>
