@@ -20,11 +20,10 @@ export default function Sidebar() {
 
   return (
     <aside id="sidebar" className="fixed top-16 left-0 bottom-0 w-50 border-r-2 bg-white border-blue-200 shadow-sm flex flex-col z-40">
-      <div className="p-4 border-b border-gray-200">
-        <div className="w-10 h-10 rounded mb-2 overflow-hidden">
-          <Image src="/dbclogo.png" alt="DBC Logo" width={40} height={40} />
+      <div className="p-4 border-b border-gray-200 flex justify-center items-center h-40">
+        <div className="rounded mb-1 overflow-hidden align-middle">
+          <Image src="/dbclogo.png" alt="DBC Logo" width={200} height={200} />
         </div>
-        {/* <h2 className="text-base font-semibold text-gray-800">Javindotech</h2> */}
       </div>
 
       <nav className="flex-1">

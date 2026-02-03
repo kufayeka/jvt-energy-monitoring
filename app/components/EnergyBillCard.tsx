@@ -45,7 +45,7 @@ const buildGrafanaUrl = (
   const refreshQuery = refreshKey ? `&_refresh=${refreshKey}` : "";
   return (
     `${GRAFANA_BASE}?orgId=1` +
-    `&from=now-2d&to=now&timezone=browser` +
+    `&from=now/M&to=now&timezone=browser` +
     `&var-site=&var-equipment=&var-sample=&var-signal=&var-device=&var-area=` +
     `&var-powerFactor=${vars.powerFactor ?? ""}` +
     `&var-WBP=${vars.WBP ?? ""}` +
@@ -110,7 +110,7 @@ export default function EnergyBillCard() {
         <h3 className="text-lg font-bold text-gray-800">
           Energy & Bill Summary
         </h3>
-        <p className="text-sm text-gray-500">Last 2 Days</p>
+        <p className="text-sm text-gray-500">This Month</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

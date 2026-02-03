@@ -123,6 +123,10 @@ export default function Analytics() {
                   <option value="12h">12 hours</option>
                   <option value="1d">1 day</option>
                   <option value="1w">1 week</option>
+                  <option value="1 month">1 month</option>
+                  <option value="3 months">3 months</option>
+                  <option value="6 months">6 months</option>
+                  <option value="1 year">1 year</option>
                 </TextField>
               </div>
 
