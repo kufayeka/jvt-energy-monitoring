@@ -5,6 +5,7 @@ import { TextField } from "@mui/material";
 import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
 import DebugLink from "../components/DebugLink";
+import ExportExcelButton from "../components/ExportExcelButton";
 import { useSettings } from "../hooks/useSettings";
 import { useAtom, useAtomValue } from "jotai";
 import { buildGrafanaEmbedUrl } from "../config/links";
@@ -141,18 +142,25 @@ export default function Analytics() {
                 >
                   Generate
                 </button>
-                <button className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition w-40">
-                  Export to Excel
-                </button>
               </div>
             </div>
 
           <div className="my-8 flex flex-col items-center gap-6 bg-white border border-blue-200 p-4 rounded">
             <h2 className="text-xl font-semibold">Energy Consumption Trend (Total)</h2>
+            <ExportExcelButton
+              embedUrl={iframeSrcTotalWithRefresh}
+              label="Get Excel Report"
+              filePrefix="energy-total"
+            />
             <iframe src={iframeSrcTotalWithRefresh} width="100%" height="500" frameBorder="0"></iframe>
             <DebugLink url={iframeSrcTotalWithRefresh} />
             
             <h2 className="text-xl font-semibold">Energy Consumption Trend (Breakdown)</h2>
+                        <ExportExcelButton
+              embedUrl={iframeSrcBreakdownWithRefresh}
+              label="Get Excel Report"
+              filePrefix="energy-breakdown"
+            />
             <iframe src={iframeSrcBreakdownWithRefresh} width="100%" height="500" frameBorder="0"></iframe>
             <DebugLink url={iframeSrcBreakdownWithRefresh} />
 

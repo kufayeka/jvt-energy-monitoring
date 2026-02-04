@@ -3,6 +3,7 @@ export const APP_ORIGIN = `http://${SERVER_IP}:3000`;
 export const GRAFANA_BASE_URL = `http://${SERVER_IP}:3000`;
 export const GRAFANA_DASHBOARD_UID = "jv5xcvr";
 export const GRAFANA_DASHBOARD_SLUG = "graha-pacific";
+export const EXCEL_BASE_URL = `http://${SERVER_IP}:3333`;
 export const NODE_RED_DASHBOARD_URL = `http://192.168.68.56:1880/dashboard/EMSCard`;
 export const CHILLER_EMBED_URL = `http://localhost:3001/online/swtop/mi6im`;
 
@@ -61,4 +62,35 @@ export function buildGrafanaEmbedUrl({
   }
 
   return url.toString();
+}
+
+const normalizeToMs = (value: string | null) => {
+  if (!value) return "";
+  if (/^\d+$/.test(value)) return value;
+  const parsed = Date.parse(value);
+  return Number.isNaN(parsed) ? "" : String(parsed);
+};
+
+export function buildExcelUrlFromEmbed(embedUrl: string) {
+  const embed = new URL(embedUrl);
+  const panelRaw = embed.searchParams.get("panelId") ?? "";
+  const panelId = panelRaw.startsWith("panel-")
+    ? panelRaw.replace("panel-", "")
+    : panelRaw;
+  const fromMs = normalizeToMs(embed.searchParams.get("from"));
+  const toMs = normalizeToMs(embed.searchParams.get("to"));
+
+  const excelUrl = new URL("/excel", EXCEL_BASE_URL);
+  excelUrl.searchParams.set("dashboardUid", GRAFANA_DASHBOARD_UID);
+  if (panelId) excelUrl.searchParams.set("panelId", panelId);
+  if (fromMs) excelUrl.searchParams.set("from", fromMs);
+  if (toMs) excelUrl.searchParams.set("to", toMs);
+
+  embed.searchParams.forEach((value, key) => {
+    if (key.startsWith("var-")) {
+      excelUrl.searchParams.set(key, value);
+    }
+  });
+
+  return excelUrl.toString();
 }
