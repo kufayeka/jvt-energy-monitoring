@@ -1,7 +1,7 @@
 export const SERVER_IP = "172.25.104.4";
 export const APP_ORIGIN = `http://${SERVER_IP}:3000`;
 export const GRAFANA_BASE_URL = `http://${SERVER_IP}:3000`;
-export const GRAFANA_DASHBOARD_UID = "jv5xcvr";
+export const GRAFANA_DASHBOARD_UID = "jvvbjlf";
 export const GRAFANA_DASHBOARD_SLUG = "graha-pacific";
 export const EXCEL_BASE_URL = `http://${SERVER_IP}:3333`;
 export const NODE_RED_DASHBOARD_URL = `http://${SERVER_IP}:1880/dashboard/EMSCard`;
