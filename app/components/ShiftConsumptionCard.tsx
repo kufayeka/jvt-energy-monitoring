@@ -48,7 +48,7 @@ export default function ShiftConsumptionCard() {
           <span className="text-gray-400 text-sm">Pie Chart Grafana Placeholder</span>
         </div>
       </div> */}
-      <iframe src={iframeSrc} width="450" height="400" frameBorder="0"></iframe>
+      <iframe src={iframeSrc} width="100%" height="400" frameBorder="0"></iframe>
       <DebugLink url={iframeSrc} />
         <div className="flex items-center">
           <div className="w-4 h-4 bg-red-500 rounded mr-2"></div>

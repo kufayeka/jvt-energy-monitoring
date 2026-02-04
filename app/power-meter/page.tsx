@@ -7,7 +7,7 @@ export default function PowerMeter() {
     <>
       <Header />
       <Sidebar />
-      <main id="main-content" className="ml-50 mt-16">
+      <main id="main-content" className="ml-50 mt-20">
         {/* <h1 className="text-2xl font-bold text-gray-800 mb-4">Power Meter</h1>
         <p className="text-gray-600">This is the Power Meter page. Placeholder content.</p> */}
         {/* Add more content here */}

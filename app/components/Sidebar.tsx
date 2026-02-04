@@ -20,9 +20,9 @@ export default function Sidebar() {
 
   return (
     <aside id="sidebar" className="fixed top-16 left-0 bottom-0 w-50 border-r-2 bg-white border-blue-200 shadow-sm flex flex-col z-40">
-      <div className="p-4 border-b border-gray-200 flex justify-center items-center h-40">
+      <div className="p-4 border-b border-gray-200 flex justify-center items-center py-7">
         <div className="rounded mb-1 overflow-hidden align-middle">
-          <Image src="/dbclogo.png" alt="DBC Logo" width={200} height={200} />
+          <Image src="/dbclogo.png" alt="DBC Logo" width={100} height={100} />
         </div>
       </div>
 
