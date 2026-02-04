@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 
 function pad(n: number) {
@@ -28,15 +30,13 @@ export default function Header() {
   }, []);
 
   return (
-    <header id="header" className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 h-16 flex items-center justify-between px-6 z-50">
-      <div className="flex flex-col gap-1">
-  <h1 className="text-lg font-semibold text-gray-800">
-    Energy Management System – Electricity
-  </h1>
-  <h4 className="text-sm text-gray-600">
-    by Javindotech
-  </h4>
-</div>
+    <header id="header" className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 h-20 flex items-center justify-between px-6 z-50">
+      <div className="flex flex-col py-6">
+        <Image src="/tracnergy_logo.png" alt="DBC Logo" width={200} height={200} />
+        <h4 className="text-sm text-gray-600">
+          by Javindotech
+        </h4>
+      </div>
 
       <div className="flex items-center space-x-4">
         <span className="text-sm text-gray-600">{nowText}</span>
