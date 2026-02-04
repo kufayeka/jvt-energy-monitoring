@@ -1,11 +1,11 @@
-export const SERVER_IP = "192.168.68.99";
+export const SERVER_IP = "172.25.104.4";
 export const APP_ORIGIN = `http://${SERVER_IP}:3000`;
 export const GRAFANA_BASE_URL = `http://${SERVER_IP}:3000`;
 export const GRAFANA_DASHBOARD_UID = "jv5xcvr";
 export const GRAFANA_DASHBOARD_SLUG = "graha-pacific";
 export const EXCEL_BASE_URL = `http://${SERVER_IP}:3333`;
-export const NODE_RED_DASHBOARD_URL = `http://192.168.68.56:1880/dashboard/EMSCard`;
-export const CHILLER_EMBED_URL = `http://localhost:3001/online/swtop/mi6im`;
+export const NODE_RED_DASHBOARD_URL = `http://${SERVER_IP}:1880/dashboard/EMSCard`;
+export const CHILLER_EMBED_URL = `http://${SERVER_IP}:1111/online/swtop/mi6im`;
 
 type GrafanaEmbedOptions = {
   panelId: string;
