@@ -1,5 +1,6 @@
 import Header from "../components/Header";
 import Sidebar from "../components/Sidebar";
+import { NODE_RED_DASHBOARD_URL } from "../config/links";
 
 export default function PowerMeter() {
   return (
@@ -11,7 +12,7 @@ export default function PowerMeter() {
         <p className="text-gray-600">This is the Power Meter page. Placeholder content.</p> */}
         {/* Add more content here */}
         <div style={{ transform: "scale(0.67)", transformOrigin: "top left", width: "150%", height: "1500px" }}>
-          <iframe style={{ border: "1px #FFFFFF none" }} src="http://192.168.68.56:1880/dashboard/EMSCard" title="iFrame" width="100%" height="2000px"  allow="fullscreen"></iframe>
+          <iframe style={{ border: "1px #FFFFFF none" }} src={NODE_RED_DASHBOARD_URL} title="iFrame" width="100%" height="2000px"  allow="fullscreen"></iframe>
         </div>
       </main>
     </>

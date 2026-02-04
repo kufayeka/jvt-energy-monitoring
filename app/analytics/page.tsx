@@ -7,12 +7,14 @@ import Sidebar from "../components/Sidebar";
 import DebugLink from "../components/DebugLink";
 import { useSettings } from "../hooks/useSettings";
 import { useAtom, useAtomValue } from "jotai";
+import { buildGrafanaEmbedUrl } from "../config/links";
 import {
   analyticsEndDateAtom,
   analyticsIframeBreakdownAtom,
   analyticsIframeTotalAtom,
   analyticsSampleTimeAtom,
   analyticsStartDateAtom,
+  DEFAULT_ANALYTICS_RANGE,
   refreshTickAtom,
 } from "../state/grafana";
 
@@ -26,18 +28,24 @@ export default function Analytics() {
   const { settings } = useSettings();
 
   const buildGrafanaSrc = (panelId: string, refreshKey?: number) => {
-    // Fallback to fixed timestamps if dates aren't provided
-    const fromMs = startDate ? new Date(startDate).getTime() : 1766135892000;
-    const toMs = endDate ? new Date(endDate).getTime() : 1766141404000;
+    // Fallback to default range if dates aren't provided
+    const fromMs = startDate
+      ? new Date(startDate).getTime()
+      : DEFAULT_ANALYTICS_RANGE.startMs;
+    const toMs = endDate
+      ? new Date(endDate).getTime()
+      : DEFAULT_ANALYTICS_RANGE.endMs;
     const pf = settings?.powerFactor ?? "";
     const sample = sampleTime ?? "";
-    const refreshQuery = refreshKey ? `&_refresh=${refreshKey}` : "";
 
-    return `http://192.168.68.99:3000/d-solo/jv5xcvr/graha-pacific?orgId=1&from=${fromMs}&to=${toMs}&timezone=browser&var-site=&var-equipment=&var-sample=${encodeURIComponent(
-      sample
-    )}&var-signal=&var-device=&var-area=&var-powerFactor=${encodeURIComponent(String(
-      pf
-    ))}&var-LWBP=&var-WBP=&var-LWBP_price=&var-WBP_price=&refresh=5s&panelId=${panelId}&theme=light&__feature.dashboardSceneSolo=true${refreshQuery}`;
+    return buildGrafanaEmbedUrl({
+      panelId,
+      from: fromMs,
+      to: toMs,
+      sample,
+      powerFactor: pf,
+      refreshKey,
+    });
   };
 
   const handleGenerate = () => {
@@ -77,11 +85,7 @@ export default function Analytics() {
       <Header />
       <Sidebar />
       <main id="main-content" className="ml-52 mt-16 p-6">
-        {/* <h1 className="text-2xl font-bold text-gray-800 mb-4">Analytics</h1> */}
-        {/* <p className="text-gray-600">This is the Analytics page. Placeholder content.</p> */}
-        {/* Add more content here */}
 
-        
         <div className="bg-white rounded-lg border-2 border-blue-200 shadow-sm p-6">
 
           <h2 className="text-lg font-semibold text-gray-800 mb-3">Trend Visualisation</h2>

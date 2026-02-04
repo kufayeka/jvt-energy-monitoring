@@ -6,11 +6,7 @@ import { useSettings } from "../hooks/useSettings";
 import { useAtomValue } from "jotai";
 import { refreshTickAtom } from "../state/grafana";
 import DebugLink from "./DebugLink";
-
-/* ================= CONFIG ================= */
-
-const GRAFANA_BASE =
-  "http://192.168.68.99:3000/d-solo/jv5xcvr/graha-pacific";
+import { buildGrafanaEmbedUrl } from "../config/links";
 
 type PanelKey =
   | "energyTotal"
@@ -27,34 +23,6 @@ const PANEL_ID: Record<PanelKey, string> = {
   billTotal: "panel-7",
   billWBP: "panel-10",
   billLWBP: "panel-11",
-};
-
-/* ================= HELPERS ================= */
-
-const buildGrafanaUrl = (
-  panelId: string,
-  vars: {
-    powerFactor: number | null;
-    WBP: string | null;
-    LWBP: string | null;
-    WBP_price: number | null;
-    LWBP_price: number | null;
-  },
-  refreshKey?: number
-) => {
-  const refreshQuery = refreshKey ? `&_refresh=${refreshKey}` : "";
-  return (
-    `${GRAFANA_BASE}?orgId=1` +
-    `&from=now/M&to=now&timezone=browser` +
-    `&var-site=&var-equipment=&var-sample=&var-signal=&var-device=&var-area=` +
-    `&var-powerFactor=${vars.powerFactor ?? ""}` +
-    `&var-WBP=${vars.WBP ?? ""}` +
-    `&var-LWBP=${vars.LWBP ?? ""}` +
-    `&var-WBP_price=${vars.WBP_price ?? ""}` +
-    `&var-LWBP_price=${vars.LWBP_price ?? ""}` +
-    `&refresh=5s&panelId=${panelId}&theme=light` +
-    `&__feature.dashboardSceneSolo=true${refreshQuery}`
-  );
 };
 
 /* ================= COMPONENT ================= */
@@ -83,13 +51,62 @@ export default function EnergyBillCard() {
       LWBP_price: settings.tariff2PerKwh ?? null,
     };
 
+    const grafanaVars = {
+      WBP: vars.WBP,
+      LWBP: vars.LWBP,
+      WBP_price: vars.WBP_price,
+      LWBP_price: vars.LWBP_price,
+    };
+
     return {
-      energyTotal: buildGrafanaUrl(PANEL_ID.energyTotal, vars, refreshTick),
-      energyWBP: buildGrafanaUrl(PANEL_ID.energyWBP, vars, refreshTick),
-      energyLWBP: buildGrafanaUrl(PANEL_ID.energyLWBP, vars, refreshTick),
-      billTotal: buildGrafanaUrl(PANEL_ID.billTotal, vars, refreshTick),
-      billWBP: buildGrafanaUrl(PANEL_ID.billWBP, vars, refreshTick),
-      billLWBP: buildGrafanaUrl(PANEL_ID.billLWBP, vars, refreshTick),
+      energyTotal: buildGrafanaEmbedUrl({
+        panelId: PANEL_ID.energyTotal,
+        from: "now/M",
+        to: "now",
+        powerFactor: vars.powerFactor ?? "",
+        variables: grafanaVars,
+        refreshKey: refreshTick,
+      }),
+      energyWBP: buildGrafanaEmbedUrl({
+        panelId: PANEL_ID.energyWBP,
+        from: "now/M",
+        to: "now",
+        powerFactor: vars.powerFactor ?? "",
+        variables: grafanaVars,
+        refreshKey: refreshTick,
+      }),
+      energyLWBP: buildGrafanaEmbedUrl({
+        panelId: PANEL_ID.energyLWBP,
+        from: "now/M",
+        to: "now",
+        powerFactor: vars.powerFactor ?? "",
+        variables: grafanaVars,
+        refreshKey: refreshTick,
+      }),
+      billTotal: buildGrafanaEmbedUrl({
+        panelId: PANEL_ID.billTotal,
+        from: "now/M",
+        to: "now",
+        powerFactor: vars.powerFactor ?? "",
+        variables: grafanaVars,
+        refreshKey: refreshTick,
+      }),
+      billWBP: buildGrafanaEmbedUrl({
+        panelId: PANEL_ID.billWBP,
+        from: "now/M",
+        to: "now",
+        powerFactor: vars.powerFactor ?? "",
+        variables: grafanaVars,
+        refreshKey: refreshTick,
+      }),
+      billLWBP: buildGrafanaEmbedUrl({
+        panelId: PANEL_ID.billLWBP,
+        from: "now/M",
+        to: "now",
+        powerFactor: vars.powerFactor ?? "",
+        variables: grafanaVars,
+        refreshKey: refreshTick,
+      }),
     };
   }, [isLoaded, settings, refreshTick]);
 

@@ -5,6 +5,7 @@ import { useSettings } from "../hooks/useSettings";
 import { useAtomValue } from "jotai";
 import { refreshTickAtom } from "../state/grafana";
 import DebugLink from "./DebugLink";
+import { buildGrafanaEmbedUrl } from "../config/links";
 
 export default function ShiftConsumptionCard() {
   const { settings, isLoaded: settingsLoaded } = useSettings();
@@ -12,10 +13,14 @@ export default function ShiftConsumptionCard() {
 
   const iframeSrc = useMemo(() => {
     const pf = settingsLoaded ? settings.powerFactor ?? "" : "";
-    const refreshQuery = refreshTick ? `&_refresh=${refreshTick}` : "";
-    return `http://192.168.68.99:3000/d-solo/jv5xcvr/graha-pacific?orgId=1&from=now-2d&to=now&timezone=browser&var-site=&var-equipment=&var-sample=&var-signal=&var-device=&var-area=&var-powerFactor=${encodeURIComponent(
-      String(pf)
-    )}&var-LWBP=&var-WBP=&var-LWBP_price=&var-WBP_price=&refresh=5s&panelId=panel-8&theme=light&__feature.dashboardSceneSolo=true${refreshQuery}`;
+
+    return buildGrafanaEmbedUrl({
+      panelId: "panel-8",
+      from: "now-2d",
+      to: "now",
+      powerFactor: pf,
+      refreshKey: refreshTick,
+    });
   }, [settingsLoaded, settings.powerFactor, refreshTick]);
 
   return (

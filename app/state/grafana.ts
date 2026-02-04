@@ -1,15 +1,52 @@
 import { atom } from "jotai";
+import { buildGrafanaEmbedUrl } from "../config/links";
 
+const pad2 = (value: number) => String(value).padStart(2, "0");
+
+const formatDateTimeLocal = (date: Date) => {
+  const year = date.getFullYear();
+  const month = pad2(date.getMonth() + 1);
+  const day = pad2(date.getDate());
+  const hours = pad2(date.getHours());
+  const minutes = pad2(date.getMinutes());
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
+};
+
+// set default analytic start-end time range from 7 days ago to now  
+const getDefaultAnalyticsRange = () => {
+  const now = new Date();
+  now.setSeconds(0, 0);
+
+  const start = new Date(now);
+  start.setDate(now.getDate() - 7);
+  start.setHours(0, 0, 0, 0);
+
+  return {
+    startDate: formatDateTimeLocal(start),
+    endDate: formatDateTimeLocal(now),
+    startMs: start.getTime(),
+    endMs: now.getTime(),
+  };
+};
+
+export const DEFAULT_ANALYTICS_RANGE = getDefaultAnalyticsRange();
 export const refreshTickAtom = atom(0);
-
-export const analyticsStartDateAtom = atom("");
-export const analyticsEndDateAtom = atom("");
-export const analyticsSampleTimeAtom = atom("");
+export const analyticsStartDateAtom = atom(DEFAULT_ANALYTICS_RANGE.startDate);
+export const analyticsEndDateAtom = atom(DEFAULT_ANALYTICS_RANGE.endDate);
+export const analyticsSampleTimeAtom = atom("1h");
 
 export const analyticsIframeTotalAtom = atom(
-  "http://192.168.68.99:3000/d-solo/jv5xcvr/graha-pacific?orgId=1&from=1766135892000&to=1766141404000&timezone=browser&var-site=&var-equipment=&var-sample=&var-signal=&var-device=&var-area=&var-powerFactor=&var-LWBP=&var-WBP=&var-LWBP_price=&var-WBP_price=&refresh=5s&panelId=panel-3&theme=light&__feature.dashboardSceneSolo=true"
+  buildGrafanaEmbedUrl({
+    panelId: "panel-3",
+    from: DEFAULT_ANALYTICS_RANGE.startMs,
+    to: DEFAULT_ANALYTICS_RANGE.endMs,
+  })
 );
 
 export const analyticsIframeBreakdownAtom = atom(
-  "http://192.168.68.99:3000/d-solo/jv5xcvr/graha-pacific?orgId=1&from=1766135892000&to=1766141404000&timezone=browser&var-site=&var-equipment=&var-sample=&var-signal=&var-device=&var-area=&var-powerFactor=&var-LWBP=&var-WBP=&var-LWBP_price=&var-WBP_price=&refresh=5s&panelId=panel-4&theme=light&__feature.dashboardSceneSolo=true"
+  buildGrafanaEmbedUrl({
+    panelId: "panel-4",
+    from: DEFAULT_ANALYTICS_RANGE.startMs,
+    to: DEFAULT_ANALYTICS_RANGE.endMs,
+  })
 );

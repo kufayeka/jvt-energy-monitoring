@@ -5,6 +5,7 @@ import { useSettings } from "../hooks/useSettings";
 import { useAtomValue } from "jotai";
 import { refreshTickAtom } from "../state/grafana";
 import DebugLink from "./DebugLink";
+import { buildGrafanaEmbedUrl } from "../config/links";
 
 function pad(n: number) {
   return n.toString().padStart(2, "0");
@@ -51,11 +52,14 @@ export default function EnergyConsumptionCard() {
     const pf = settings.powerFactor ?? "";
     const fromMs = fromDate.getTime();
     const toMs = toDate.getTime();
-    const refreshQuery = refreshTick ? `&_refresh=${refreshTick}` : "";
 
-    return `http://192.168.68.99:3000/d-solo/jv5xcvr/graha-pacific?orgId=1&from=${fromMs}&to=${toMs}&timezone=browser&var-site=&var-equipment=&var-sample=&var-signal=&var-device=&var-area=&var-powerFactor=${encodeURIComponent(
-      String(pf)
-    )}&var-LWBP=&var-WBP=&var-LWBP_price=&var-WBP_price=&refresh=5s&panelId=panel-5&theme=light&__feature.dashboardSceneSolo=true${refreshQuery}`;
+    return buildGrafanaEmbedUrl({
+      panelId: "panel-5",
+      from: fromMs,
+      to: toMs,
+      powerFactor: pf,
+      refreshKey: refreshTick,
+    });
   }, [settingsLoaded, settings.powerFactor, fromDate, toDate, refreshTick]);
 
   return (
