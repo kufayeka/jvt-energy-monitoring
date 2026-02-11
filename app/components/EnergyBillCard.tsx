@@ -18,11 +18,11 @@ type PanelKey =
 
 const PANEL_ID: Record<PanelKey, string> = {
   energyTotal: "panel-9",
-  energyWBP: "panel-10",
-  energyLWBP: "panel-7",
-  billTotal: "panel-11",
-  billWBP: "panel-8",
-  billLWBP: "panel-12",
+  energyWBP: "panel-12",
+  energyLWBP: "panel-13",
+  billTotal: "panel-7",
+  billWBP: "panel-10",
+  billLWBP: "panel-11",
 };
 
 /* ================= COMPONENT ================= */

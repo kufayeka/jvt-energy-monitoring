@@ -6,6 +6,13 @@ export interface Settings {
   tariff1EndTime: string;
   tariff2PerKwh: number;
   powerFactor: number;
+  chiller1RunningHoursLimit: number;
+  chiller2RunningHoursLimit: number;
+  chiller3RunningHoursLimit: number;
+  inletPump1RunningHoursLimit: number;
+  inletPump2RunningHoursLimit: number;
+  outletPump1RunningHoursLimit: number;
+  outletPump2RunningHoursLimit: number;
 }
 
 const DEFAULT_SETTINGS: Settings = {
@@ -14,6 +21,13 @@ const DEFAULT_SETTINGS: Settings = {
   tariff1EndTime: "00:00",
   tariff2PerKwh: 0,
   powerFactor: 0,
+  chiller1RunningHoursLimit: 0,
+  chiller2RunningHoursLimit: 0,
+  chiller3RunningHoursLimit: 0,
+  inletPump1RunningHoursLimit: 0,
+  inletPump2RunningHoursLimit: 0,
+  outletPump1RunningHoursLimit: 0,
+  outletPump2RunningHoursLimit: 0,
 };
 
 export function useSettings() {
@@ -50,11 +64,22 @@ export function useSettings() {
     setSettings(newSettings);
     setIsLoaded(true);
     try {
-      await fetch("/api/settings", {
+      // Save to local API
+      const localSave = fetch("/api/settings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newSettings),
       });
+
+      // Save to external endpoint
+      const externalSave = fetch("http://localhost:1880/api/settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newSettings),
+      });
+
+      // Wait for both requests to complete
+      await Promise.all([localSave, externalSave]);
     } catch (error) {
       console.error("Failed to save settings:", error);
     }

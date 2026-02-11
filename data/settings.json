@@ -1,7 +1,22 @@
 {
-  "tariff1PerKwh": 1700,
+  "tariff1PerKwh": 2090,
   "tariff1StartTime": "18:00",
   "tariff1EndTime": "22:00",
-  "tariff2PerKwh": 1100,
-  "powerFactor": 0.844
+  "tariff2PerKwh": 1500,
+  "powerFactor": 0.943,
+  "chiller1RunningHoursResetInterval": 1000,
+  "chiller2RunningHoursResetInterval": 1000,
+  "chiller3RunningHoursResetInterval": 1000,
+  "inletPump1RunningHoursResetInterval": 1000,
+  "inletPump2RunningHoursResetInterval": 1000,
+  "outletPump1RunningHoursResetInterval": 1000,
+  "outletPump2RunningHoursResetInterval": 1000,
+  "runningHoursResetInterval": 1000,
+  "chiller1RunningHoursLimit": 1070,
+  "chiller2RunningHoursLimit": 990,
+  "chiller3RunningHoursLimit": 1000,
+  "inletPump1RunningHoursLimit": 1000,
+  "inletPump2RunningHoursLimit": 1000,
+  "outletPump1RunningHoursLimit": 1000,
+  "outletPump2RunningHoursLimit": 1000
 }

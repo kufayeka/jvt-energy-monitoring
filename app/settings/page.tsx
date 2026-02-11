@@ -103,7 +103,111 @@ function SettingsForm({
           />
         </div>
 
-        <div className="flex flex-col gap-2">
+        <div className=" mb-4 bg-white p-4 rounded border-2 border-dashed border-blue-200">
+          <div className="my-3">Chiller 1 Running Hours Limit</div>
+          <TextField
+            label="Running Hours Limit (hours)"
+            type="number"
+            fullWidth
+            inputProps={{ step: "1" }}
+            value={formData.chiller1RunningHoursLimit}
+            onChange={(e) => handleChange("chiller1RunningHoursLimit", parseFloat(e.target.value) || 0)}
+            className="border rounded px-3 py-2 focus:outline-none focus:ring focus:ring-green-300"
+            placeholder="Running Hours Limit (hours)"
+          />
+        </div>
+
+        <div className=" mb-4 bg-white p-4 rounded border-2 border-dashed border-blue-200">
+          <div className="my-3">Chiller 2 Running Hours Limit</div>
+          <TextField
+            label="Running Hours Limit (hours)"
+            type="number"
+            fullWidth
+            inputProps={{ step: "1" }}
+            value={formData.chiller2RunningHoursLimit}
+            onChange={(e) => handleChange("chiller2RunningHoursLimit", parseFloat(e.target.value) || 0)}
+            className="border rounded px-3 py-2 focus:outline-none focus:ring focus:ring-green-300"
+            placeholder="Running Hours Limit (hours)"
+          />
+        </div>
+
+        <div className=" mb-4 bg-white p-4 rounded border-2 border-dashed border-blue-200">
+          <div className="my-3">Chiller 3 Running Hours Limit</div>
+          <TextField
+            label="Running Hours Limit (hours)"
+            type="number"
+            fullWidth
+            inputProps={{ step: "1" }}
+            value={formData.chiller3RunningHoursLimit}
+            onChange={(e) => handleChange("chiller3RunningHoursLimit", parseFloat(e.target.value) || 0)}
+            className="border rounded px-3 py-2 focus:outline-none focus:ring focus:ring-green-300"
+            placeholder="Running Hours Limit (hours)"
+          />
+        </div>
+
+      </div>
+
+      <div className="grid grid-cols-4 gap-4 mb-6">
+        <div className=" mb-4 bg-white p-4 rounded border-2 border-dashed border-blue-200">
+          <div className="my-3">Inlet Pump 1 Running Hours Limit</div>
+          <TextField
+            label="Running Hours Limit (hours)"
+            type="number"
+            fullWidth
+            inputProps={{ step: "1" }}
+            value={formData.inletPump1RunningHoursLimit}
+            onChange={(e) => handleChange("inletPump1RunningHoursLimit", parseFloat(e.target.value) || 0)}
+            className="border rounded px-3 py-2 focus:outline-none focus:ring focus:ring-green-300"
+            placeholder="Running Hours Limit (hours)"
+          />
+        </div>
+
+        <div className=" mb-4 bg-white p-4 rounded border-2 border-dashed border-blue-200">
+          <div className="my-3">Inlet Pump 2 Running Hours Limit</div>
+          <TextField
+            label="Running Hours Limit (hours)"
+            type="number"
+            fullWidth
+            inputProps={{ step: "1" }}
+            value={formData.inletPump2RunningHoursLimit}
+            onChange={(e) => handleChange("inletPump2RunningHoursLimit", parseFloat(e.target.value) || 0)}
+            className="border rounded px-3 py-2 focus:outline-none focus:ring focus:ring-green-300"
+            placeholder="Running Hours Limit (hours)"
+          />
+        </div>
+
+        <div className=" mb-4 bg-white p-4 rounded border-2 border-dashed border-blue-200">
+          <div className="my-3">Outlet Pump 1 Running Hours Limit</div>
+          <TextField
+            label="Running Hours Limit (hours)"
+            type="number"
+            fullWidth
+            inputProps={{ step: "1" }}
+            value={formData.outletPump1RunningHoursLimit}
+            onChange={(e) => handleChange("outletPump1RunningHoursLimit", parseFloat(e.target.value) || 0)}
+            className="border rounded px-3 py-2 focus:outline-none focus:ring focus:ring-green-300"
+            placeholder="Running Hours Limit (hours)"
+          />
+        </div>
+
+        <div className=" mb-4 bg-white p-4 rounded border-2 border-dashed border-blue-200">
+          <div className="my-3">Outlet Pump 2 Running Hours Limit</div>
+          <TextField
+            label="Running Hours Limit (hours)"
+            type="number"
+            fullWidth
+            inputProps={{ step: "1" }}
+            value={formData.outletPump2RunningHoursLimit}
+            onChange={(e) => handleChange("outletPump2RunningHoursLimit", parseFloat(e.target.value) || 0)}
+            className="border rounded px-3 py-2 focus:outline-none focus:ring focus:ring-green-300"
+            placeholder="Running Hours Limit (hours)"
+          />
+        </div>
+
+      </div>
+
+      <div className="mt-4">
+        <div className="flex items-center gap-3 justify-end w-full">
           <button
             onClick={handleSave}
             className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition"

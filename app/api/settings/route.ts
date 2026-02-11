@@ -10,6 +10,13 @@ const DEFAULT_SETTINGS = {
   tariff1EndTime: "00:00",
   tariff2PerKwh: 0,
   powerFactor: 0,
+  chiller1RunningHoursResetInterval: 0,
+  chiller2RunningHoursResetInterval: 0,
+  chiller3RunningHoursResetInterval: 0,
+  inletPump1RunningHoursResetInterval: 0,
+  inletPump2RunningHoursResetInterval: 0,
+  outletPump1RunningHoursResetInterval: 0,
+  outletPump2RunningHoursResetInterval: 0,
 };
 
 const DATA_DIR = path.join(process.cwd(), "data");

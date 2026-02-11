@@ -15,7 +15,7 @@ export default function ShiftConsumptionCard() {
     const pf = settingsLoaded ? settings.powerFactor ?? "" : "";
 
     return buildGrafanaEmbedUrl({
-      panelId: "panel-6",
+      panelId: "panel-8",
       from: "now-2d",
       to: "now",
       powerFactor: pf,
