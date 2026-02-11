@@ -8,7 +8,7 @@ export default function HVAC() {
       <Header />
       <Sidebar />
       <main id="main-content" className="ml-50 mt-20">
-        <iframe className="bg-gray-100" src={CHILLER_EMBED_URL} title="iFrame" width="100%" height="700px" allow="fullscreen"></iframe>
+        <iframe className="bg-gray-100" src={CHILLER_EMBED_URL} title="iFrame" width="100%" height="600px" allow="fullscreen"></iframe>
       </main>
     </div>
   );
