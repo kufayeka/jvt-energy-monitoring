@@ -163,7 +163,6 @@ function SettingsForm({
         <div className="bg-white p-4 rounded border-2 border-dashed border-blue-200">
           <div className="my-3">Chiller 1 Current Running Hour</div>
           <TextField
-            label="Running Hours Limit (hours)"
             type="number"
             fullWidth
             value={formData.chiller1CurrentRunningHours}
@@ -180,7 +179,6 @@ function SettingsForm({
         <div className="bg-white p-4 rounded border-2 border-dashed border-blue-200">
           <div className="my-3">Chiller 2 Current Running Hour</div>
           <TextField
-            label="Running Hours Limit (hours)"
             type="number"
             fullWidth
             value={formData.chiller2CurrentRunningHours}
@@ -197,7 +195,6 @@ function SettingsForm({
         <div className="bg-white p-4 rounded border-2 border-dashed border-blue-200">
           <div className="my-3">Chiller 3 Current Running Hour</div>
           <TextField
-            label="Running Hours Limit (hours)"
             type="number"
             fullWidth
             value={formData.chiller3CurrentRunningHours}

@@ -159,21 +159,21 @@ export default function EnergyBillCard() {
         <div className="space-y-4">
           <div>
             <p className="text-sm text-gray-600 mb-2">
-              Total Energy Bill
+              Total Energy Bill (Rupiah/RP.)
             </p>
             {renderPanel(panels.billTotal)}
           </div>
 
           <div>
             <p className="text-sm text-gray-600 mb-2">
-              Energy Bill (WBP)
+              Energy Bill (WBP) (Rupiah/RP.)
             </p>
             {renderPanel(panels.billWBP)}
           </div>
 
           <div>
             <p className="text-sm text-gray-600 mb-2">
-              Energy Bill (LWBP)
+              Energy Bill (LWBP) (Rupiah/RP.)
             </p>
             {renderPanel(panels.billLWBP)}
           </div>
