@@ -78,7 +78,7 @@ export function useSettings() {
       });
 
       // Save to external endpoint
-      const externalSave = fetch("http://localhost:1880/api/settings", {
+      const externalSave = fetch("http://172.25.104.4:1880/api/settings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newSettings),
