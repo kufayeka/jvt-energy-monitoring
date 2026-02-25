@@ -9,6 +9,9 @@ export interface Settings {
   chiller1RunningHoursLimit: number;
   chiller2RunningHoursLimit: number;
   chiller3RunningHoursLimit: number;
+  chiller1CurrentRunningHours: number;
+  chiller2CurrentRunningHours: number;
+  chiller3CurrentRunningHours: number;
   inletPump1RunningHoursLimit: number;
   inletPump2RunningHoursLimit: number;
   outletPump1RunningHoursLimit: number;
@@ -24,6 +27,9 @@ const DEFAULT_SETTINGS: Settings = {
   chiller1RunningHoursLimit: 0,
   chiller2RunningHoursLimit: 0,
   chiller3RunningHoursLimit: 0,
+  chiller1CurrentRunningHours: 0,
+  chiller2CurrentRunningHours: 0,
+  chiller3CurrentRunningHours: 0,
   inletPump1RunningHoursLimit: 0,
   inletPump2RunningHoursLimit: 0,
   outletPump1RunningHoursLimit: 0,

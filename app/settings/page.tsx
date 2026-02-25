@@ -159,6 +159,56 @@ function SettingsForm({
             }
           />
         </div>
+        {/* Chiller 1 */}
+        <div className="bg-white p-4 rounded border-2 border-dashed border-blue-200">
+          <div className="my-3">Chiller 1 Current Running Hour</div>
+          <TextField
+            label="Running Hours Limit (hours)"
+            type="number"
+            fullWidth
+            value={formData.chiller1CurrentRunningHours}
+            onChange={(e) =>
+              handleChange(
+                "chiller1CurrentRunningHours",
+                parseFloat(e.target.value) || 0
+              )
+            }
+          />
+        </div>
+
+        {/* Chiller 2 */}
+        <div className="bg-white p-4 rounded border-2 border-dashed border-blue-200">
+          <div className="my-3">Chiller 2 Current Running Hour</div>
+          <TextField
+            label="Running Hours Limit (hours)"
+            type="number"
+            fullWidth
+            value={formData.chiller2CurrentRunningHours}
+            onChange={(e) =>
+              handleChange(
+                "chiller2CurrentRunningHours",
+                parseFloat(e.target.value) || 0
+              )
+            }
+          />
+        </div>
+
+        {/* Chiller 3 */}
+        <div className="bg-white p-4 rounded border-2 border-dashed border-blue-200">
+          <div className="my-3">Chiller 3 Current Running Hour</div>
+          <TextField
+            label="Running Hours Limit (hours)"
+            type="number"
+            fullWidth
+            value={formData.chiller3CurrentRunningHours}
+            onChange={(e) =>
+              handleChange(
+                "chiller3CurrentRunningHours",
+                parseFloat(e.target.value) || 0
+              )
+            }
+          />
+        </div>
       </div>
 
       <div className="grid grid-cols-4 gap-4 mb-6">
@@ -230,6 +280,8 @@ function SettingsForm({
           />
         </div>
       </div>
+
+      
 
       <div className="flex justify-end">
         <button
